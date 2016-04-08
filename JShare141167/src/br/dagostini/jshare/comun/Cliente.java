@@ -1,4 +1,4 @@
-package br.univel.jshare.comun;
+package br.dagostini.jshare.comun;
 
 import java.io.Serializable;
 
