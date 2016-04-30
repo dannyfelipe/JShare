@@ -256,6 +256,9 @@ public class Server extends JFrame implements IServer {
 	public void desconectar(Cliente c) throws RemoteException {
 		// TODO Auto-generated method stub
 		
+		clientes.remove(c);
+		exibirMsg("Cliente: " + c.getNome().toUpperCase() + "desconectou-se.");
+		
 	}
 
 }
