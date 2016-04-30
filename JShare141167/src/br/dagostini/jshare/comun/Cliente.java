@@ -31,6 +31,4 @@ public class Cliente implements Serializable {
 		this.porta = porta;
 	}
 	
-	
-
 }
