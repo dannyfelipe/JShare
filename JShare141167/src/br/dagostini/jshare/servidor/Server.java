@@ -29,6 +29,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.awt.event.ActionEvent;
@@ -49,6 +50,8 @@ public class Server extends JFrame implements IServer {
 	private Registry registry;
 	
 	private SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy H:mm:ss:SSS");
+	// lista dos clientes registrados no servidor
+	private Map<String, Cliente> clientes = new HashMap<>();
 
 	/**
 	 * Launch the application.
@@ -225,6 +228,9 @@ public class Server extends JFrame implements IServer {
 	@Override
 	public void registrarCliente(Cliente c) throws RemoteException {
 		// TODO Auto-generated method stub
+		
+		exibirMsg(c.getNome() + ", com IP: " + c.getIp() + " se conectou.");
+		clientes.put(c.getIp(), c);
 		
 	}
 
