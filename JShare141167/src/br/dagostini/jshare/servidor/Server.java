@@ -27,6 +27,8 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.awt.event.ActionEvent;
@@ -35,15 +37,18 @@ public class Server extends JFrame implements IServer {
 
 	private JPanel contentPane;
 	private JTextField txtF_Porta;
+	private JButton btnIniciarServico;
+	private JComboBox cBx_IP;
+	private JButton btnEncerrarServico;
+	private JTextArea txtA_Message;
 	
 	/*
 	 * VARIÁVEIS DE INSTÂNCIA
 	 */
 	private IServer servidor;
 	private Registry registry;
-	private JButton btnIniciarServico;
-	private JComboBox cBx_IP;
-	private JButton btnEncerrarServico;
+	
+	private SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy H:mm:ss:SSS");
 
 	/**
 	 * Launch the application.
@@ -117,7 +122,7 @@ public class Server extends JFrame implements IServer {
 		btnIniciarServico.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				// invoca o método para que o serviço do servidor seja iniciado.
-				startServer();
+				startService();
 				
 			}
 		});
@@ -138,17 +143,23 @@ public class Server extends JFrame implements IServer {
 		gbc_scrollPane.gridy = 1;
 		contentPane.add(scrollPane, gbc_scrollPane);
 		
-		JTextArea txtA_Message = new JTextArea();
+		txtA_Message = new JTextArea();
 		scrollPane.setViewportView(txtA_Message);
 		
 		btnEncerrarServico = new JButton("Encerrar serviço");
+		btnEncerrarServico.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				// invoca o método para que o serviço do servidor seja encerrado.
+				endService();
+			}
+		});
 		GridBagConstraints gbc_btnEncerrarServico = new GridBagConstraints();
 		gbc_btnEncerrarServico.gridx = 10;
 		gbc_btnEncerrarServico.gridy = 13;
 		contentPane.add(btnEncerrarServico, gbc_btnEncerrarServico);
 	}
 
-	protected void startServer() {
+	protected void startService() {
 		// TODO Auto-generated method stub
 		
 		String porta = txtF_Porta.getText().trim();
@@ -169,7 +180,7 @@ public class Server extends JFrame implements IServer {
 			registry = LocateRegistry.createRegistry(numporta);
 			registry.rebind(IServer.NOME_SERVICO, servidor);
 			
-			System.out.println("Serviço iniciado");
+			System.out.println("SERVIÇO INICIADO...");
 			
 			cBx_IP.setEnabled(false);
 			txtF_Porta.setEnabled(false);
@@ -181,6 +192,22 @@ public class Server extends JFrame implements IServer {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	protected void endService() {
+		// TODO Auto-generated method stub
+		
+		System.out.println("ENCERRANDO SERVIÇO...");
+		
+		
+		
+	}
+	
+	private void exibirMsg(String string) {
+		txtA_Message.append(dateformat.format(new Date()));
+		txtA_Message.append(" => ");
+		txtA_Message.append(string);
+		txtA_Message.append("\n");
 	}
 
 	@Override
