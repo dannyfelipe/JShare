@@ -180,7 +180,8 @@ public class Server extends JFrame implements IServer {
 			registry = LocateRegistry.createRegistry(numporta);
 			registry.rebind(IServer.NOME_SERVICO, servidor);
 			
-			System.out.println("SERVIÇO INICIADO...");
+			//System.out.println("SERVIÇO INICIADO...");
+			exibirMsg("SERVIÇO INICIADO...");
 			
 			cBx_IP.setEnabled(false);
 			txtF_Porta.setEnabled(false);
@@ -199,7 +200,18 @@ public class Server extends JFrame implements IServer {
 		
 		System.out.println("ENCERRANDO SERVIÇO...");
 		
-		
+		try {
+			UnicastRemoteObject.unexportObject(this, true);
+			UnicastRemoteObject.unexportObject(registry, true);
+			
+			cBx_IP.setEnabled(true);
+			txtF_Porta.setEnabled(true);
+			btnIniciarServico.setEnabled(true);
+			btnEncerrarServico.setEnabled(false);
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
 	
