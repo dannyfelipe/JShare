@@ -6,8 +6,15 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import br.dagostini.jshare.comum.pojos.Arquivo;
+import br.dagostini.jshare.comun.Cliente;
+import br.dagostini.jshare.comun.IServer;
+
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 import javax.swing.JTextField;
@@ -15,11 +22,28 @@ import javax.swing.JComboBox;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
+import java.util.Map;
+import java.awt.event.ActionEvent;
 
-public class Server extends JFrame {
+public class Server extends JFrame implements IServer {
 
 	private JPanel contentPane;
-	private JTextField textField;
+	private JTextField txtF_Porta;
+	
+	/*
+	 * VARIÁVEIS DE INSTÂNCIA
+	 */
+	private IServer servidor;
+	private Registry registry;
+	private JButton btnIniciarServico;
+	private JComboBox cBx_IP;
+	private JButton btnEncerrarServico;
 
 	/**
 	 * Launch the application.
@@ -62,14 +86,14 @@ public class Server extends JFrame {
 		gbc_lblIp.gridy = 0;
 		contentPane.add(lblIp, gbc_lblIp);
 		
-		JComboBox comboBox = new JComboBox();
-		GridBagConstraints gbc_comboBox = new GridBagConstraints();
-		gbc_comboBox.gridwidth = 4;
-		gbc_comboBox.insets = new Insets(0, 0, 5, 5);
-		gbc_comboBox.fill = GridBagConstraints.HORIZONTAL;
-		gbc_comboBox.gridx = 1;
-		gbc_comboBox.gridy = 0;
-		contentPane.add(comboBox, gbc_comboBox);
+		cBx_IP = new JComboBox();
+		GridBagConstraints gbc_cBx_IP = new GridBagConstraints();
+		gbc_cBx_IP.gridwidth = 4;
+		gbc_cBx_IP.insets = new Insets(0, 0, 5, 5);
+		gbc_cBx_IP.fill = GridBagConstraints.HORIZONTAL;
+		gbc_cBx_IP.gridx = 1;
+		gbc_cBx_IP.gridy = 0;
+		contentPane.add(cBx_IP, gbc_cBx_IP);
 		
 		JLabel lblPorta = new JLabel("PORTA:");
 		GridBagConstraints gbc_lblPorta = new GridBagConstraints();
@@ -79,17 +103,24 @@ public class Server extends JFrame {
 		gbc_lblPorta.gridy = 0;
 		contentPane.add(lblPorta, gbc_lblPorta);
 		
-		textField = new JTextField();
-		GridBagConstraints gbc_textField = new GridBagConstraints();
-		gbc_textField.gridwidth = 3;
-		gbc_textField.insets = new Insets(0, 0, 5, 5);
-		gbc_textField.fill = GridBagConstraints.HORIZONTAL;
-		gbc_textField.gridx = 7;
-		gbc_textField.gridy = 0;
-		contentPane.add(textField, gbc_textField);
-		textField.setColumns(10);
+		txtF_Porta = new JTextField();
+		GridBagConstraints gbc_txtF_Porta = new GridBagConstraints();
+		gbc_txtF_Porta.gridwidth = 3;
+		gbc_txtF_Porta.insets = new Insets(0, 0, 5, 5);
+		gbc_txtF_Porta.fill = GridBagConstraints.HORIZONTAL;
+		gbc_txtF_Porta.gridx = 7;
+		gbc_txtF_Porta.gridy = 0;
+		contentPane.add(txtF_Porta, gbc_txtF_Porta);
+		txtF_Porta.setColumns(10);
 		
-		JButton btnIniciarServico = new JButton("Iniciar serviço");
+		btnIniciarServico = new JButton("Iniciar serviço");
+		btnIniciarServico.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				// invoca o método para que o serviço do servidor seja iniciado.
+				startServer();
+				
+			}
+		});
 		GridBagConstraints gbc_btnIniciarServico = new GridBagConstraints();
 		gbc_btnIniciarServico.fill = GridBagConstraints.HORIZONTAL;
 		gbc_btnIniciarServico.insets = new Insets(0, 0, 5, 0);
@@ -107,14 +138,79 @@ public class Server extends JFrame {
 		gbc_scrollPane.gridy = 1;
 		contentPane.add(scrollPane, gbc_scrollPane);
 		
-		JTextArea textArea = new JTextArea();
-		scrollPane.setViewportView(textArea);
+		JTextArea txtA_Message = new JTextArea();
+		scrollPane.setViewportView(txtA_Message);
 		
-		JButton btnEncerrarServico = new JButton("Encerrar serviço");
+		btnEncerrarServico = new JButton("Encerrar serviço");
 		GridBagConstraints gbc_btnEncerrarServico = new GridBagConstraints();
 		gbc_btnEncerrarServico.gridx = 10;
 		gbc_btnEncerrarServico.gridy = 13;
 		contentPane.add(btnEncerrarServico, gbc_btnEncerrarServico);
+	}
+
+	protected void startServer() {
+		// TODO Auto-generated method stub
+		
+		String porta = txtF_Porta.getText().trim();
+		
+		if (!porta.matches("[0-9]+") || porta.length() > 5) {
+			JOptionPane.showMessageDialog(this, "A porta deve conter 5 dígitos");
+			return;
+		}
+		
+		int numporta = Integer.parseInt(porta);
+		if (numporta < 1024 || numporta > 65535) {
+			JOptionPane.showMessageDialog(this, "A porta deve ser entre 1024 e 65535");
+			return;
+		}
+		
+		try {
+			servidor = (IServer) UnicastRemoteObject.exportObject(this, 0);
+			registry = LocateRegistry.createRegistry(numporta);
+			registry.rebind(IServer.NOME_SERVICO, servidor);
+			
+			System.out.println("Serviço iniciado");
+			
+			cBx_IP.setEnabled(false);
+			txtF_Porta.setEnabled(false);
+			btnIniciarServico.setEnabled(false);
+			btnEncerrarServico.setEnabled(true);
+
+		} catch (RemoteException e) {
+			JOptionPane.showMessageDialog(this, "Erro ao iniciar o serviço");
+			e.printStackTrace();
+		}
+		
+	}
+
+	@Override
+	public void registrarCliente(Cliente c) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void publicarListaArquivos(Cliente c, List<Arquivo> lista) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Map<Cliente, List<Arquivo>> procurarArquivo(String nome) throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public byte[] baixarArquivo(Arquivo arq) throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void desconectar(Cliente c) throws RemoteException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
