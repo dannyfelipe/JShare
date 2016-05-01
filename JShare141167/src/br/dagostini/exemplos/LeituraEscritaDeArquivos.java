@@ -19,6 +19,10 @@ public class LeituraEscritaDeArquivos {
 		escreva(new File("Cópia de " + f.getName()), dados);
 	}
 
+	public LeituraEscritaDeArquivos() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public byte[] leia(File arq) {
 		Path path = Paths.get(arq.getPath());
 		try {

@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import br.dagostini.exemplos.LeituraEscritaDeArquivos;
 import br.dagostini.jshare.comum.pojos.Arquivo;
 import br.dagostini.jshare.comun.Cliente;
 import br.dagostini.jshare.comun.IServer;
@@ -23,11 +24,13 @@ import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -250,13 +253,35 @@ public class Server extends JFrame implements IServer {
 	@Override
 	public Map<Cliente, List<Arquivo>> procurarArquivo(String nome) throws RemoteException {
 		// TODO Auto-generated method stub
-		return null;
+		
+		exibirMsg("Pesquisado o arquivo: " + nome);
+		
+		Map<Cliente, List<Arquivo>> procuraArquivo = new HashMap<>();
+		
+		for (Map.Entry<Cliente, List<Arquivo>> entry : arquivos.entrySet()) {
+			
+			List<Arquivo> listaArquivo = new ArrayList<>();
+			for (Arquivo arquivo : entry.getValue()) {
+				if (arquivo.getNome().equals(nome)) {
+					listaArquivo.add(arquivo);
+				}
+			}
+			if (listaArquivo.size() > 0) {
+				procuraArquivo.put(entry.getKey(), listaArquivo);
+			}
+		}
+		return procuraArquivo;
 	}
 
 	@Override
 	public byte[] baixarArquivo(Arquivo arq) throws RemoteException {
 		// TODO Auto-generated method stub
-		return null;
+		
+		File file = new File(".\\Share\\Download\\" + arq.getNome() );
+		byte[] dados = new LeituraEscritaDeArquivos().leia(file);
+		exibirMsg("Dados " + dados);
+		
+		return dados;
 	}
 
 	@Override
@@ -264,6 +289,7 @@ public class Server extends JFrame implements IServer {
 		// TODO Auto-generated method stub
 		
 		clientes.remove(c);
+		arquivos.remove(c);
 		exibirMsg("Cliente: " + c.getNome().toUpperCase() + "desconectou-se.");
 		
 	}
