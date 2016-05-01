@@ -52,6 +52,8 @@ public class Server extends JFrame implements IServer {
 	private SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy H:mm:ss:SSS");
 	// lista dos clientes registrados no servidor
 	private Map<String, Cliente> clientes = new HashMap<>();
+	// lista dos arquivos disponibilizados no servidor
+	private Map<Cliente, List<Arquivo>> arquivos = new HashMap<>();
 
 	/**
 	 * Launch the application.
@@ -237,6 +239,11 @@ public class Server extends JFrame implements IServer {
 	@Override
 	public void publicarListaArquivos(Cliente c, List<Arquivo> lista) throws RemoteException {
 		// TODO Auto-generated method stub
+		
+		for (Arquivo arquivo : lista) {
+			exibirMsg("Cliente: " + c.getNome() + "/ Disponibilizou o arquivo: " + arquivo.getNome() + " : " + arquivo.getTamanho());
+		}
+		arquivos.put(c, lista);
 		
 	}
 
