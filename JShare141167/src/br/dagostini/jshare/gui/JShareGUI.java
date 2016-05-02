@@ -21,9 +21,14 @@ import javax.swing.JTextField;
 import javax.swing.JSeparator;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
+
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -50,11 +55,20 @@ public class JShareGUI extends JFrame implements IServer {
 	/*
 	 * VARIÁVEIS DE INSTÂNCIA
 	 */
+	private IServer servidor;
+	private Registry registry;
+	// formatação da data para exibição na área de status
 	private SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy H:mm:ss:SSS");
 	// lista dos clientes registrados no servidor
 	private Map<String, Cliente> clientes = new HashMap<>();
 	// lista dos arquivos disponibilizados no servidor
 	private Map<Cliente, List<Arquivo>> arquivos = new HashMap<>();
+	private JButton btn_PararServico;
+	private JButton btn_IniciarServico;
+	private JButton btn_conectar;
+	private JButton btn_Pesquisar;
+	private JButton btn_Download;
+	private JComboBox cBx_endip;
 
 	/**
 	 * Launch the application.
@@ -181,7 +195,7 @@ public class JShareGUI extends JFrame implements IServer {
 		panel.add(txtF_Uporta, gbc_txtF_Uporta);
 		txtF_Uporta.setColumns(10);
 
-		JButton btn_conectar = new JButton("Conectar");
+		btn_conectar = new JButton("Conectar");
 		GridBagConstraints gbc_btn_conectar = new GridBagConstraints();
 		gbc_btn_conectar.insets = new Insets(0, 0, 5, 0);
 		gbc_btn_conectar.gridx = 12;
@@ -213,7 +227,7 @@ public class JShareGUI extends JFrame implements IServer {
 		panel.add(txtF_arquivo, gbc_txtF_arquivo);
 		txtF_arquivo.setColumns(10);
 
-		JButton btn_Pesquisar = new JButton("Pesquisar");
+		btn_Pesquisar = new JButton("Pesquisar");
 		GridBagConstraints gbc_btn_Pesquisar = new GridBagConstraints();
 		gbc_btn_Pesquisar.insets = new Insets(0, 0, 5, 0);
 		gbc_btn_Pesquisar.gridx = 12;
@@ -232,7 +246,7 @@ public class JShareGUI extends JFrame implements IServer {
 		list_Arquivos = new JList();
 		scrollPane.setViewportView(list_Arquivos);
 
-		JButton btn_Download = new JButton("Download");
+		btn_Download = new JButton("Download");
 		btn_Download.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 			}
@@ -280,7 +294,7 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_lblEndip.gridy = 0;
 		panel_1.add(lblEndip, gbc_lblEndip);
 
-		JComboBox cBx_endip = new JComboBox();
+		cBx_endip = new JComboBox();
 		GridBagConstraints gbc_cBx_endip = new GridBagConstraints();
 		gbc_cBx_endip.gridwidth = 3;
 		gbc_cBx_endip.insets = new Insets(0, 0, 5, 5);
@@ -319,18 +333,72 @@ public class JShareGUI extends JFrame implements IServer {
 		txtA_Status = new JTextArea();
 		scrollPane_2.setViewportView(txtA_Status);
 
-		JButton btn_IniciarServico = new JButton("Iniciar serviço");
+		btn_IniciarServico = new JButton("Iniciar serviço");
+		btn_IniciarServico.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// invoca o método para que o serviço do servidor seja iniciado.
+				startService();
+			}
+		});
 		GridBagConstraints gbc_btn_IniciarServico = new GridBagConstraints();
 		gbc_btn_IniciarServico.insets = new Insets(0, 0, 0, 5);
 		gbc_btn_IniciarServico.gridx = 4;
 		gbc_btn_IniciarServico.gridy = 11;
 		panel_1.add(btn_IniciarServico, gbc_btn_IniciarServico);
 
-		JButton btn_PararServico = new JButton("Parar serviço");
+		btn_PararServico = new JButton("Parar serviço");
+		btn_PararServico.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// invoca o método para que o serviço do servidor seja
+				// encerrado.
+				stopService();
+			}
+		});
 		GridBagConstraints gbc_btn_PararServico = new GridBagConstraints();
 		gbc_btn_PararServico.gridx = 5;
 		gbc_btn_PararServico.gridy = 11;
 		panel_1.add(btn_PararServico, gbc_btn_PararServico);
+	}
+
+	protected void startService() {
+		// TODO Auto-generated method stub
+
+		String porta = txtF_Sporta.getText().trim();
+
+		if (!porta.matches("[0-9]+") || porta.length() > 5) {
+			JOptionPane.showMessageDialog(this, "A porta deve conter 5 dígitos");
+			return;
+		}
+
+		int numporta = Integer.parseInt(porta);
+		if (numporta < 1024 || numporta > 65535) {
+			JOptionPane.showMessageDialog(this, "A porta deve ser entre 1024 e 65535");
+			return;
+		}
+
+		try {
+			servidor = (IServer) UnicastRemoteObject.exportObject(this, 0);
+			registry = LocateRegistry.createRegistry(numporta);
+			registry.rebind(IServer.NOME_SERVICO, servidor);
+
+			// System.out.println("SERVIÇO INICIADO...");
+			exibirMsg("SERVIÇO INICIADO...");
+
+			cBx_endip.setEnabled(false);
+			txtF_Sporta.setEnabled(false);
+			btn_IniciarServico.setEnabled(false);
+			btn_PararServico.setEnabled(true);
+
+		} catch (RemoteException e) {
+			JOptionPane.showMessageDialog(this, "Erro ao iniciar o serviço");
+			e.printStackTrace();
+		}
+
+	}
+
+	protected void stopService() {
+		// TODO Auto-generated method stub
+
 	}
 
 	private void exibirMsg(String string) {
@@ -389,10 +457,10 @@ public class JShareGUI extends JFrame implements IServer {
 	public byte[] baixarArquivo(Arquivo arq) throws RemoteException {
 		// TODO Auto-generated method stub
 
-		File file = new File(".\\Share\\Download\\" + arq.getNome() );
+		File file = new File(".\\Share\\Download\\" + arq.getNome());
 		byte[] dados = new LeituraEscritaDeArquivos().leia(file);
 		exibirMsg("Download de: " + arq.getNome());
-		
+
 		return dados;
 	}
 
