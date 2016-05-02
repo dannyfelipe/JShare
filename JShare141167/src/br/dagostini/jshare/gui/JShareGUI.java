@@ -26,6 +26,7 @@ import javax.swing.JOptionPane;
 
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -52,6 +53,12 @@ public class JShareGUI extends JFrame implements IServer {
 	private JTextField txtF_Sporta;
 	private JTextArea txtA_Status;
 	private JList list_Arquivos;
+	private JButton btn_PararServico;
+	private JButton btn_IniciarServico;
+	private JButton btn_conectar;
+	private JButton btn_Pesquisar;
+	private JButton btn_Download;
+	private JComboBox cBx_endip;
 
 	/*
 	 * VARIÁVEIS DE INSTÂNCIA
@@ -64,12 +71,12 @@ public class JShareGUI extends JFrame implements IServer {
 	private Map<String, Cliente> clientes = new HashMap<>();
 	// lista dos arquivos disponibilizados no servidor
 	private Map<Cliente, List<Arquivo>> arquivos = new HashMap<>();
-	private JButton btn_PararServico;
-	private JButton btn_IniciarServico;
-	private JButton btn_conectar;
-	private JButton btn_Pesquisar;
-	private JButton btn_Download;
-	private JComboBox cBx_endip;
+	
+	private static String IPServer = null;
+	private static String PortaServer = null;
+	private IServer servico = null;
+	private Cliente cliente = null;
+
 
 	/**
 	 * Launch the application.
@@ -197,6 +204,12 @@ public class JShareGUI extends JFrame implements IServer {
 		txtF_Uporta.setColumns(10);
 
 		btn_conectar = new JButton("Conectar");
+		btn_conectar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				// invoca o método para conexão com o servidor
+				conectar(txtF_ipserver.getText(), txtF_Uporta.getText());
+			}
+		});
 		GridBagConstraints gbc_btn_conectar = new GridBagConstraints();
 		gbc_btn_conectar.insets = new Insets(0, 0, 5, 0);
 		gbc_btn_conectar.gridx = 12;
@@ -362,6 +375,69 @@ public class JShareGUI extends JFrame implements IServer {
 		
 		configIP();
 	}
+	
+	public String verificaIP(String endIP){
+		endIP.trim();
+		if (!endIP.matches("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}")) {
+			throw new RuntimeException("O endereço IP é inválido!");
+		}
+		return endIP;
+	}
+	
+	public int verificaPorta(String numPorta){
+		numPorta.trim();
+		if (!numPorta.matches("[0-9]+") || numPorta.length() > 5) {
+			throw new RuntimeException("A porta deve ser um valor numérico de no máximo 5 dígitos!");
+		}
+		int intPorta = Integer.parseInt(numPorta);
+		if (intPorta < 1024 || intPorta > 65535) {
+			throw new RuntimeException("A porta deve estar entre os valores de 1024 à 65535!");
+		}
+		return intPorta;
+	}
+	
+	public String verificaNome(String nomeCliente) {
+		nomeCliente.trim();
+		if (nomeCliente.length() == 0) {
+			throw new RuntimeException("Digite um nome válido!");
+		}
+		return nomeCliente;
+	}
+
+	protected void conectar(String host, String porta) throws RuntimeException {
+		// TODO Auto-generated method stub
+		try {
+			host = verificaIP(host);
+			
+			int numporta = verificaPorta(porta);
+			
+			if (cliente == null) {
+				if(IPServer == null || PortaServer == null){
+					IPServer = txtF_ipserver.getText();
+					PortaServer = txtF_Uporta.getText();
+				}
+				cliente = new Cliente();
+				cliente.setNome(verificaNome(txtF_nome.getText()));
+				cliente.setIp(verificaIP(cBx_endip.getSelectedItem().toString()));
+				cliente.setPorta(verificaPorta(txtF_Sporta.getText()));
+				
+			} else {
+				cliente.setNome(verificaNome(txtF_nome.getText()));
+				cliente.setIp(verificaIP(cBx_endip.getSelectedItem().toString()));
+				cliente.setPorta(verificaPorta(txtF_Sporta.getText()));
+			}
+			
+			servico = (IServer) Naming.lookup("rmi:// " + host + " : " + porta + " / " + IServer.NOME_SERVICO);
+			
+			
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, e.getMessage() + "ERRO! Verifique se há conectivade com o servidor.");
+			e.printStackTrace();
+			conectar(host, porta);
+			JOptionPane.showMessageDialog(this, "Reconectando...");
+		}
+	}
+
 
 	private void configIP() {
 		// TODO Auto-generated method stub
