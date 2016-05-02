@@ -17,8 +17,11 @@ import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+
+import javax.swing.AbstractListModel;
 import javax.swing.JButton;
 import javax.swing.JTextField;
+import javax.swing.ListModel;
 import javax.swing.JSeparator;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
@@ -242,6 +245,12 @@ public class JShareGUI extends JFrame implements IServer {
 		txtF_arquivo.setColumns(10);
 
 		btn_Pesquisar = new JButton("Pesquisar");
+		btn_Pesquisar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				// invoca o método para pesquisa de arquivos no servidor.
+				fileSearch();
+			}
+		});
 		GridBagConstraints gbc_btn_Pesquisar = new GridBagConstraints();
 		gbc_btn_Pesquisar.insets = new Insets(0, 0, 5, 0);
 		gbc_btn_Pesquisar.gridx = 12;
@@ -376,6 +385,47 @@ public class JShareGUI extends JFrame implements IServer {
 		configIP();
 	}
 	
+	protected void fileSearch() {
+		// TODO Auto-generated method stub
+		
+		list_Arquivos.removeAll();
+		arquivos.clear();
+		
+		try {
+			arquivos = servico.procurarArquivo(txtF_arquivo.getText().trim());
+			for (Map.Entry<Cliente, List<Arquivo> > entry : arquivos.entrySet()) {
+				addFileList(entry.getValue());
+			}
+			
+		} catch (RemoteException e) {
+			// TODO: handle exception
+			JOptionPane.showMessageDialog(this, "Não foi possível realizar a pesquisa...");
+			e.printStackTrace();
+			conectar(IPServer, PortaServer);
+			JOptionPane.showMessageDialog(this, "Reconectando...");
+		}
+		
+	}
+
+	private void addFileList(List<Arquivo> lista) throws RemoteException {
+		// TODO Auto-generated method stub
+		list_Arquivos.removeAll();
+		
+		ListModel<String> model = new AbstractListModel<String>() {
+			@Override
+			public int getSize() {
+				return lista.size();
+			}
+
+			@Override
+			public String getElementAt(int index) {
+				// TODO Auto-generated method stub
+				return lista.get(index).getNome();
+			}
+		};
+		list_Arquivos.setModel(model);
+	}
+
 	public String verificaIP(String endIP){
 		endIP.trim();
 		if (!endIP.matches("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}")) {
@@ -433,7 +483,7 @@ public class JShareGUI extends JFrame implements IServer {
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, e.getMessage() + "ERRO! Verifique se há conectivade com o servidor.");
 			e.printStackTrace();
-			conectar(host, porta);
+			conectar(IPServer, PortaServer);
 			JOptionPane.showMessageDialog(this, "Reconectando...");
 		}
 	}
