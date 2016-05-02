@@ -23,6 +23,7 @@ import javax.swing.JList;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +44,7 @@ public class JShareGUI extends JFrame implements IServer {
 	private JTextField txtF_Sporta;
 	private JTextArea txtA_Status;
 	private JList list_Arquivos;
-	
+
 	/*
 	 * VARIÁVEIS DE INSTÂNCIA
 	 */
@@ -80,12 +81,15 @@ public class JShareGUI extends JFrame implements IServer {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		GridBagLayout gbl_contentPane = new GridBagLayout();
-		gbl_contentPane.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_contentPane.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_contentPane.columnWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gbl_contentPane.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_contentPane.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+				0, 0, 0, 0, 0 };
+		gbl_contentPane.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_contentPane.columnWeights = new double[] { 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+				0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gbl_contentPane.rowWeights = new double[] { 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+				0.0, Double.MIN_VALUE };
 		contentPane.setLayout(gbl_contentPane);
-		
+
 		JLabel lblUsurio = new JLabel("USUÁRIO:");
 		GridBagConstraints gbc_lblUsurio = new GridBagConstraints();
 		gbc_lblUsurio.anchor = GridBagConstraints.WEST;
@@ -94,7 +98,7 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_lblUsurio.gridx = 0;
 		gbc_lblUsurio.gridy = 0;
 		contentPane.add(lblUsurio, gbc_lblUsurio);
-		
+
 		JLabel lblServidor = new JLabel("SERVIDOR:");
 		GridBagConstraints gbc_lblServidor = new GridBagConstraints();
 		gbc_lblServidor.anchor = GridBagConstraints.WEST;
@@ -103,7 +107,7 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_lblServidor.gridx = 14;
 		gbc_lblServidor.gridy = 0;
 		contentPane.add(lblServidor, gbc_lblServidor);
-		
+
 		JPanel panel = new JPanel();
 		GridBagConstraints gbc_panel = new GridBagConstraints();
 		gbc_panel.gridheight = 12;
@@ -114,12 +118,13 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_panel.gridy = 1;
 		contentPane.add(panel, gbc_panel);
 		GridBagLayout gbl_panel = new GridBagLayout();
-		gbl_panel.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_panel.columnWeights = new double[]{1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gbl_panel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_panel.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_panel.columnWeights = new double[] { 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+				Double.MIN_VALUE };
+		gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE };
 		panel.setLayout(gbl_panel);
-		
+
 		JLabel lblNome = new JLabel("Nome:");
 		GridBagConstraints gbc_lblNome = new GridBagConstraints();
 		gbc_lblNome.anchor = GridBagConstraints.EAST;
@@ -127,7 +132,7 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_lblNome.gridx = 0;
 		gbc_lblNome.gridy = 0;
 		panel.add(lblNome, gbc_lblNome);
-		
+
 		txtF_nome = new JTextField();
 		GridBagConstraints gbc_txtF_nome = new GridBagConstraints();
 		gbc_txtF_nome.gridwidth = 11;
@@ -137,7 +142,7 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_txtF_nome.gridy = 0;
 		panel.add(txtF_nome, gbc_txtF_nome);
 		txtF_nome.setColumns(10);
-		
+
 		JLabel lblIpServer = new JLabel("IP Server:");
 		GridBagConstraints gbc_lblIpServer = new GridBagConstraints();
 		gbc_lblIpServer.anchor = GridBagConstraints.EAST;
@@ -145,7 +150,7 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_lblIpServer.gridx = 0;
 		gbc_lblIpServer.gridy = 1;
 		panel.add(lblIpServer, gbc_lblIpServer);
-		
+
 		txtF_ipserver = new JTextField();
 		GridBagConstraints gbc_txtF_ipserver = new GridBagConstraints();
 		gbc_txtF_ipserver.gridwidth = 6;
@@ -155,7 +160,7 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_txtF_ipserver.gridy = 1;
 		panel.add(txtF_ipserver, gbc_txtF_ipserver);
 		txtF_ipserver.setColumns(10);
-		
+
 		JLabel lblPorta = new JLabel("Porta:");
 		GridBagConstraints gbc_lblPorta = new GridBagConstraints();
 		gbc_lblPorta.anchor = GridBagConstraints.EAST;
@@ -163,7 +168,7 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_lblPorta.gridx = 7;
 		gbc_lblPorta.gridy = 1;
 		panel.add(lblPorta, gbc_lblPorta);
-		
+
 		txtF_Uporta = new JTextField();
 		GridBagConstraints gbc_txtF_Uporta = new GridBagConstraints();
 		gbc_txtF_Uporta.gridwidth = 4;
@@ -173,21 +178,21 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_txtF_Uporta.gridy = 1;
 		panel.add(txtF_Uporta, gbc_txtF_Uporta);
 		txtF_Uporta.setColumns(10);
-		
+
 		JButton btn_conectar = new JButton("Conectar");
 		GridBagConstraints gbc_btn_conectar = new GridBagConstraints();
 		gbc_btn_conectar.insets = new Insets(0, 0, 5, 0);
 		gbc_btn_conectar.gridx = 12;
 		gbc_btn_conectar.gridy = 1;
 		panel.add(btn_conectar, gbc_btn_conectar);
-		
+
 		JSeparator separator = new JSeparator();
 		GridBagConstraints gbc_separator = new GridBagConstraints();
 		gbc_separator.insets = new Insets(0, 0, 5, 5);
 		gbc_separator.gridx = 0;
 		gbc_separator.gridy = 2;
 		panel.add(separator, gbc_separator);
-		
+
 		JLabel lblArquivo = new JLabel("Arquivo:");
 		GridBagConstraints gbc_lblArquivo = new GridBagConstraints();
 		gbc_lblArquivo.anchor = GridBagConstraints.EAST;
@@ -195,7 +200,7 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_lblArquivo.gridx = 0;
 		gbc_lblArquivo.gridy = 3;
 		panel.add(lblArquivo, gbc_lblArquivo);
-		
+
 		txtF_arquivo = new JTextField();
 		GridBagConstraints gbc_txtF_arquivo = new GridBagConstraints();
 		gbc_txtF_arquivo.gridwidth = 11;
@@ -205,14 +210,14 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_txtF_arquivo.gridy = 3;
 		panel.add(txtF_arquivo, gbc_txtF_arquivo);
 		txtF_arquivo.setColumns(10);
-		
+
 		JButton btn_Pesquisar = new JButton("Pesquisar");
 		GridBagConstraints gbc_btn_Pesquisar = new GridBagConstraints();
 		gbc_btn_Pesquisar.insets = new Insets(0, 0, 5, 0);
 		gbc_btn_Pesquisar.gridx = 12;
 		gbc_btn_Pesquisar.gridy = 3;
 		panel.add(btn_Pesquisar, gbc_btn_Pesquisar);
-		
+
 		JScrollPane scrollPane = new JScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 		gbc_scrollPane.gridwidth = 13;
@@ -221,10 +226,10 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_scrollPane.gridx = 0;
 		gbc_scrollPane.gridy = 4;
 		panel.add(scrollPane, gbc_scrollPane);
-		
+
 		list_Arquivos = new JList();
 		scrollPane.setViewportView(list_Arquivos);
-		
+
 		JButton btn_Download = new JButton("Download");
 		btn_Download.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -235,7 +240,7 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_btn_Download.gridx = 12;
 		gbc_btn_Download.gridy = 5;
 		panel.add(btn_Download, gbc_btn_Download);
-		
+
 		JScrollPane scrollPane_1 = new JScrollPane();
 		GridBagConstraints gbc_scrollPane_1 = new GridBagConstraints();
 		gbc_scrollPane_1.gridheight = 3;
@@ -244,10 +249,10 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_scrollPane_1.gridx = 0;
 		gbc_scrollPane_1.gridy = 6;
 		panel.add(scrollPane_1, gbc_scrollPane_1);
-		
+
 		table_Download = new JTable();
 		scrollPane_1.setViewportView(table_Download);
-		
+
 		JPanel panel_1 = new JPanel();
 		GridBagConstraints gbc_panel_1 = new GridBagConstraints();
 		gbc_panel_1.gridheight = 12;
@@ -258,12 +263,13 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_panel_1.gridy = 1;
 		contentPane.add(panel_1, gbc_panel_1);
 		GridBagLayout gbl_panel_1 = new GridBagLayout();
-		gbl_panel_1.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0};
-		gbl_panel_1.rowHeights = new int[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-		gbl_panel_1.columnWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gbl_panel_1.rowWeights = new double[]{0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+		gbl_panel_1.columnWidths = new int[] { 0, 0, 0, 0, 0, 0, 0 };
+		gbl_panel_1.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		gbl_panel_1.columnWeights = new double[] { 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
+		gbl_panel_1.rowWeights = new double[] { 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+				Double.MIN_VALUE };
 		panel_1.setLayout(gbl_panel_1);
-		
+
 		JLabel lblEndip = new JLabel("End.IP:");
 		GridBagConstraints gbc_lblEndip = new GridBagConstraints();
 		gbc_lblEndip.anchor = GridBagConstraints.WEST;
@@ -271,7 +277,7 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_lblEndip.gridx = 0;
 		gbc_lblEndip.gridy = 0;
 		panel_1.add(lblEndip, gbc_lblEndip);
-		
+
 		JComboBox cBx_endip = new JComboBox();
 		GridBagConstraints gbc_cBx_endip = new GridBagConstraints();
 		gbc_cBx_endip.gridwidth = 3;
@@ -280,7 +286,7 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_cBx_endip.gridx = 1;
 		gbc_cBx_endip.gridy = 0;
 		panel_1.add(cBx_endip, gbc_cBx_endip);
-		
+
 		JLabel lblPorta_1 = new JLabel("Porta:");
 		GridBagConstraints gbc_lblPorta_1 = new GridBagConstraints();
 		gbc_lblPorta_1.anchor = GridBagConstraints.EAST;
@@ -288,7 +294,7 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_lblPorta_1.gridx = 4;
 		gbc_lblPorta_1.gridy = 0;
 		panel_1.add(lblPorta_1, gbc_lblPorta_1);
-		
+
 		txtF_Sporta = new JTextField();
 		GridBagConstraints gbc_txtF_Sporta = new GridBagConstraints();
 		gbc_txtF_Sporta.insets = new Insets(0, 0, 5, 0);
@@ -297,7 +303,7 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_txtF_Sporta.gridy = 0;
 		panel_1.add(txtF_Sporta, gbc_txtF_Sporta);
 		txtF_Sporta.setColumns(10);
-		
+
 		JScrollPane scrollPane_2 = new JScrollPane();
 		GridBagConstraints gbc_scrollPane_2 = new GridBagConstraints();
 		gbc_scrollPane_2.gridheight = 10;
@@ -307,24 +313,24 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_scrollPane_2.gridx = 0;
 		gbc_scrollPane_2.gridy = 1;
 		panel_1.add(scrollPane_2, gbc_scrollPane_2);
-		
+
 		txtA_Status = new JTextArea();
 		scrollPane_2.setViewportView(txtA_Status);
-		
+
 		JButton btn_IniciarServico = new JButton("Iniciar serviço");
 		GridBagConstraints gbc_btn_IniciarServico = new GridBagConstraints();
 		gbc_btn_IniciarServico.insets = new Insets(0, 0, 0, 5);
 		gbc_btn_IniciarServico.gridx = 4;
 		gbc_btn_IniciarServico.gridy = 11;
 		panel_1.add(btn_IniciarServico, gbc_btn_IniciarServico);
-		
+
 		JButton btn_PararServico = new JButton("Parar serviço");
 		GridBagConstraints gbc_btn_PararServico = new GridBagConstraints();
 		gbc_btn_PararServico.gridx = 5;
 		gbc_btn_PararServico.gridy = 11;
 		panel_1.add(btn_PararServico, gbc_btn_PararServico);
 	}
-	
+
 	private void exibirMsg(String string) {
 		txtA_Status.append(dateformat.format(new Date()));
 		txtA_Status.append(" => ");
@@ -335,27 +341,46 @@ public class JShareGUI extends JFrame implements IServer {
 	@Override
 	public void registrarCliente(Cliente c) throws RemoteException {
 		// TODO Auto-generated method stub
-		
+
 		exibirMsg(c.getNome() + ", com IP: " + c.getIp() + " se conectou.");
 		clientes.put(c.getIp(), c);
-		
+
 	}
 
 	@Override
 	public void publicarListaArquivos(Cliente c, List<Arquivo> lista) throws RemoteException {
 		// TODO Auto-generated method stub
-		
+
 		for (Arquivo arquivo : lista) {
-			exibirMsg("Cliente: " + c.getNome() + "/ Disponibilizou o arquivo: " + arquivo.getNome() + " : " + arquivo.getTamanho());
+			exibirMsg("Cliente: " + c.getNome() + "/ Disponibilizou o arquivo: " + arquivo.getNome() + " : "
+					+ arquivo.getTamanho());
 		}
 		arquivos.put(c, lista);
-		
+
 	}
 
 	@Override
 	public Map<Cliente, List<Arquivo>> procurarArquivo(String nome) throws RemoteException {
 		// TODO Auto-generated method stub
-		return null;
+
+		exibirMsg("Pesquisado o arquivo: " + nome);
+
+		Map<Cliente, List<Arquivo>> procuraArquivo = new HashMap<>();
+
+		for (Map.Entry<Cliente, List<Arquivo>> entry : arquivos.entrySet()) {
+
+			List<Arquivo> listaArquivo = new ArrayList<>();
+			for (Arquivo arquivo : entry.getValue()) {
+				if (arquivo.getNome().equals(nome)) {
+					listaArquivo.add(arquivo);
+				}
+			}
+			if (listaArquivo.size() > 0) {
+				procuraArquivo.put(entry.getKey(), listaArquivo);
+			}
+		}
+		return procuraArquivo;
+
 	}
 
 	@Override
@@ -367,11 +392,11 @@ public class JShareGUI extends JFrame implements IServer {
 	@Override
 	public void desconectar(Cliente c) throws RemoteException {
 		// TODO Auto-generated method stub
-		
+
 		clientes.remove(c);
 		arquivos.remove(c);
 		exibirMsg("Cliente: " + c.getNome().toUpperCase() + "desconectou-se.");
-		
+
 	}
 
 }
