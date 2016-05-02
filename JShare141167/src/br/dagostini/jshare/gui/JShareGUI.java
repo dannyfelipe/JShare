@@ -345,6 +345,11 @@ public class JShareGUI extends JFrame implements IServer {
 	public void publicarListaArquivos(Cliente c, List<Arquivo> lista) throws RemoteException {
 		// TODO Auto-generated method stub
 		
+		for (Arquivo arquivo : lista) {
+			exibirMsg("Cliente: " + c.getNome() + "/ Disponibilizou o arquivo: " + arquivo.getNome() + " : " + arquivo.getTamanho());
+		}
+		arquivos.put(c, lista);
+		
 	}
 
 	@Override
