@@ -399,6 +399,21 @@ public class JShareGUI extends JFrame implements IServer {
 	protected void stopService() {
 		// TODO Auto-generated method stub
 
+		System.out.println("ENCERRANDO SERVIÇO...");
+
+		try {
+			UnicastRemoteObject.unexportObject(this, true);
+			UnicastRemoteObject.unexportObject(registry, true);
+
+			txtF_Sporta.setEnabled(true);
+			btn_IniciarServico.setEnabled(true);
+			btn_PararServico.setEnabled(false);
+
+			exibirMsg("SERVIÇO ENCERRADO...");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	private void exibirMsg(String string) {
