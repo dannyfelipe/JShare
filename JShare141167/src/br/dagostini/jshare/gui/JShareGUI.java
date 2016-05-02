@@ -7,6 +7,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import br.dagostini.exemplos.LeituraEscritaDeArquivos;
 import br.dagostini.jshare.comum.pojos.Arquivo;
 import br.dagostini.jshare.comun.Cliente;
 import br.dagostini.jshare.comun.IServer;
@@ -21,6 +22,7 @@ import javax.swing.JSeparator;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -386,7 +388,12 @@ public class JShareGUI extends JFrame implements IServer {
 	@Override
 	public byte[] baixarArquivo(Arquivo arq) throws RemoteException {
 		// TODO Auto-generated method stub
-		return null;
+
+		File file = new File(".\\Share\\Download\\" + arq.getNome() );
+		byte[] dados = new LeituraEscritaDeArquivos().leia(file);
+		exibirMsg("Download de: " + arq.getNome());
+		
+		return dados;
 	}
 
 	@Override
