@@ -24,6 +24,7 @@ import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.awt.event.ActionEvent;
@@ -47,6 +48,8 @@ public class JShareGUI extends JFrame implements IServer {
 	 * VARIÁVEIS DE INSTÂNCIA
 	 */
 	private SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy H:mm:ss:SSS");
+	// lista dos clientes registrados no servidor
+	private Map<String, Cliente> clientes = new HashMap<>();
 
 	/**
 	 * Launch the application.
@@ -330,6 +333,9 @@ public class JShareGUI extends JFrame implements IServer {
 	@Override
 	public void registrarCliente(Cliente c) throws RemoteException {
 		// TODO Auto-generated method stub
+		
+		exibirMsg(c.getNome() + ", com IP: " + c.getIp() + " se conectou.");
+		clientes.put(c.getIp(), c);
 		
 	}
 
