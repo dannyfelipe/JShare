@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import br.dagostini.exemplos.LeituraEscritaDeArquivos;
+import br.dagostini.exemplos.LerIp;
 import br.dagostini.jshare.comum.pojos.Arquivo;
 import br.dagostini.jshare.comun.Cliente;
 import br.dagostini.jshare.comun.IServer;
@@ -358,6 +359,22 @@ public class JShareGUI extends JFrame implements IServer {
 		gbc_btn_PararServico.gridx = 5;
 		gbc_btn_PararServico.gridy = 11;
 		panel_1.add(btn_PararServico, gbc_btn_PararServico);
+		
+		configIP();
+	}
+
+	private void configIP() {
+		// TODO Auto-generated method stub
+		
+		try {
+			for (String endIP : new LerIp().ListIp() ) {
+				cBx_endip.addItem(endIP);
+			} 
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		
 	}
 
 	protected void startService() {
