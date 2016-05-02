@@ -8,6 +8,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import br.dagostini.exemplos.LeituraEscritaDeArquivos;
+import br.dagostini.exemplos.LerIp;
 import br.dagostini.jshare.comum.pojos.Arquivo;
 import br.dagostini.jshare.comun.Cliente;
 import br.dagostini.jshare.comun.IServer;
@@ -165,6 +166,20 @@ public class Server extends JFrame implements IServer {
 		gbc_btnEncerrarServico.gridx = 10;
 		gbc_btnEncerrarServico.gridy = 13;
 		contentPane.add(btnEncerrarServico, gbc_btnEncerrarServico);
+		
+		configIP();
+	}
+	
+	// carrega e lista todos os ip presentes no terminal
+	private void configIP() {
+		try {
+			for (String endIP : new LerIp().ListIp() ) {
+				cBx_IP.addItem(endIP);
+			} 
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
 	}
 
 	protected void startService() {
