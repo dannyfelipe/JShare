@@ -45,7 +45,7 @@ public class Server extends JFrame implements IServer {
 	private JButton btnIniciarServico;
 	private JComboBox cBx_IP;
 	private JButton btnEncerrarServico;
-	private JTextArea txtA_Message;
+	private JTextArea txtA_Status;
 	
 	/*
 	 * VARIÁVEIS DE INSTÂNCIA
@@ -152,8 +152,8 @@ public class Server extends JFrame implements IServer {
 		gbc_scrollPane.gridy = 1;
 		contentPane.add(scrollPane, gbc_scrollPane);
 		
-		txtA_Message = new JTextArea();
-		scrollPane.setViewportView(txtA_Message);
+		txtA_Status = new JTextArea();
+		scrollPane.setViewportView(txtA_Status);
 		
 		btnEncerrarServico = new JButton("Encerrar serviço");
 		btnEncerrarServico.addActionListener(new ActionListener() {
@@ -239,10 +239,10 @@ public class Server extends JFrame implements IServer {
 	}
 	
 	private void exibirMsg(String string) {
-		txtA_Message.append(dateformat.format(new Date()));
-		txtA_Message.append(" => ");
-		txtA_Message.append(string);
-		txtA_Message.append("\n");
+		txtA_Status.append(dateformat.format(new Date()));
+		txtA_Status.append(" => ");
+		txtA_Status.append(string);
+		txtA_Status.append("\n");
 	}
 
 	@Override

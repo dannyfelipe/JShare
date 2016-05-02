@@ -6,6 +6,11 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import br.dagostini.jshare.comum.pojos.Arquivo;
+import br.dagostini.jshare.comun.Cliente;
+import br.dagostini.jshare.comun.IServer;
+
 import java.awt.GridBagLayout;
 import javax.swing.JLabel;
 import java.awt.GridBagConstraints;
@@ -16,20 +21,32 @@ import javax.swing.JSeparator;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
 import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.awt.event.ActionEvent;
 import javax.swing.JTable;
 import javax.swing.JComboBox;
 import javax.swing.JTextArea;
 
-public class JShareGUI extends JFrame {
+public class JShareGUI extends JFrame implements IServer {
 
 	private JPanel contentPane;
 	private JTextField txtF_Uporta;
 	private JTextField txtF_ipserver;
 	private JTextField txtF_arquivo;
-	private JTable table;
+	private JTable table_Download;
 	private JTextField txtF_nome;
 	private JTextField txtF_Sporta;
+	private JTextArea txtA_Status;
+	private JList list_Arquivos;
+	
+	/*
+	 * VARIÁVEIS DE INSTÂNCIA
+	 */
+	private SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy H:mm:ss:SSS");
 
 	/**
 	 * Launch the application.
@@ -200,8 +217,8 @@ public class JShareGUI extends JFrame {
 		gbc_scrollPane.gridy = 4;
 		panel.add(scrollPane, gbc_scrollPane);
 		
-		JList list = new JList();
-		scrollPane.setViewportView(list);
+		list_Arquivos = new JList();
+		scrollPane.setViewportView(list_Arquivos);
 		
 		JButton btn_Download = new JButton("Download");
 		btn_Download.addActionListener(new ActionListener() {
@@ -223,8 +240,8 @@ public class JShareGUI extends JFrame {
 		gbc_scrollPane_1.gridy = 6;
 		panel.add(scrollPane_1, gbc_scrollPane_1);
 		
-		table = new JTable();
-		scrollPane_1.setViewportView(table);
+		table_Download = new JTable();
+		scrollPane_1.setViewportView(table_Download);
 		
 		JPanel panel_1 = new JPanel();
 		GridBagConstraints gbc_panel_1 = new GridBagConstraints();
@@ -286,8 +303,8 @@ public class JShareGUI extends JFrame {
 		gbc_scrollPane_2.gridy = 1;
 		panel_1.add(scrollPane_2, gbc_scrollPane_2);
 		
-		JTextArea txtA_log = new JTextArea();
-		scrollPane_2.setViewportView(txtA_log);
+		txtA_Status = new JTextArea();
+		scrollPane_2.setViewportView(txtA_Status);
 		
 		JButton btn_IniciarServico = new JButton("Iniciar serviço");
 		GridBagConstraints gbc_btn_IniciarServico = new GridBagConstraints();
@@ -301,6 +318,43 @@ public class JShareGUI extends JFrame {
 		gbc_btn_PararServico.gridx = 5;
 		gbc_btn_PararServico.gridy = 11;
 		panel_1.add(btn_PararServico, gbc_btn_PararServico);
+	}
+	
+	private void exibirMsg(String string) {
+		txtA_Status.append(dateformat.format(new Date()));
+		txtA_Status.append(" => ");
+		txtA_Status.append(string);
+		txtA_Status.append("\n");
+	}
+
+	@Override
+	public void registrarCliente(Cliente c) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void publicarListaArquivos(Cliente c, List<Arquivo> lista) throws RemoteException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public Map<Cliente, List<Arquivo>> procurarArquivo(String nome) throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public byte[] baixarArquivo(Arquivo arq) throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void desconectar(Cliente c) throws RemoteException {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
