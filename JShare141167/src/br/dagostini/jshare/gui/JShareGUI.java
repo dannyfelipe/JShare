@@ -50,6 +50,8 @@ public class JShareGUI extends JFrame implements IServer {
 	private SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy H:mm:ss:SSS");
 	// lista dos clientes registrados no servidor
 	private Map<String, Cliente> clientes = new HashMap<>();
+	// lista dos arquivos disponibilizados no servidor
+	private Map<Cliente, List<Arquivo>> arquivos = new HashMap<>();
 
 	/**
 	 * Launch the application.
@@ -360,6 +362,10 @@ public class JShareGUI extends JFrame implements IServer {
 	@Override
 	public void desconectar(Cliente c) throws RemoteException {
 		// TODO Auto-generated method stub
+		
+		clientes.remove(c);
+		arquivos.remove(c);
+		exibirMsg("Cliente: " + c.getNome().toUpperCase() + "desconectou-se.");
 		
 	}
 
