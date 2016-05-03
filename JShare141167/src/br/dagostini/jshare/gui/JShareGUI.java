@@ -266,6 +266,8 @@ public class JShareGUI extends JFrame implements IServer {
 		btn_Download = new JButton("Download");
 		btn_Download.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
+				// invoca o método de download de arquivo
+				download();
 			}
 		});
 		GridBagConstraints gbc_btn_Download = new GridBagConstraints();
@@ -378,6 +380,52 @@ public class JShareGUI extends JFrame implements IServer {
 		configIP();
 	}
 	
+	protected void download() {
+		// TODO Auto-generated method stub
+		
+		try {
+			int item = list_Arquivos.getSelectedIndex();
+			
+			if (item > -1) {
+				String arquivo = (String) list_Arquivos.getModel().getElementAt(item);
+				
+				for (Map.Entry<Cliente, List<Arquivo> > entry : arquivos.entrySet()) {
+					
+					for (Arquivo arq : entry.getValue()) {
+						
+						if (arquivo.equals(arq.getNome())) {
+							servico = null;
+							txtF_ipserver.setText(entry.getKey().getIp());
+							txtF_Sporta.setText(String.valueOf(entry.getKey().getPorta()));
+							conectar(txtF_ipserver.getText(), txtF_Sporta.getText());
+							downloading(servico.baixarArquivo(arq), arq.getFile());
+							
+							return;
+						}
+						
+					}
+					
+				}
+			} else {
+				JOptionPane.showMessageDialog(this, "Selecione um arquivo para baixar");
+			}
+			
+		} catch (RemoteException e) {
+			// TODO: handle exception
+			JOptionPane.showMessageDialog(this, "Erro! Não foi possível fazer o download");
+			e.printStackTrace();
+			conectar(IPServer, PortaServer);
+			JOptionPane.showMessageDialog(this, "Reconectando...");
+		}
+		
+	}
+
+	private void downloading(byte[] dados, File nome) {
+		// TODO Auto-generated method stub
+		new LeituraEscritaDeArquivos().escreva(new File(".\\Share\\Upload\\" + "Cópia de " + nome.getName()), dados);
+		
+	}
+
 	protected void fileSearch() {
 		// TODO Auto-generated method stub
 		
