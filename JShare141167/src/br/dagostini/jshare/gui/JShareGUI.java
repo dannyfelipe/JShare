@@ -9,6 +9,7 @@ import javax.swing.border.EmptyBorder;
 
 import br.dagostini.exemplos.LeituraEscritaDeArquivos;
 import br.dagostini.exemplos.LerIp;
+import br.dagostini.exemplos.ListarDiretoriosArquivos;
 import br.dagostini.jshare.comum.pojos.Arquivo;
 import br.dagostini.jshare.comun.Cliente;
 import br.dagostini.jshare.comun.IServer;
@@ -204,7 +205,7 @@ public class JShareGUI extends JFrame implements IServer {
 		btn_conectar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				// invoca o método para conexão com o servidor
-				conectar(txtF_ipserver.getText(), txtF_Uporta.getText());
+				conectar(txtF_ipserver.getText(), txtF_Uporta.getText(), 0);
 			}
 		});
 		GridBagConstraints gbc_btn_conectar = new GridBagConstraints();
@@ -397,7 +398,7 @@ public class JShareGUI extends JFrame implements IServer {
 							servico = null;
 							txtF_ipserver.setText(entry.getKey().getIp());
 							txtF_Sporta.setText(String.valueOf(entry.getKey().getPorta()));
-							conectar(txtF_ipserver.getText(), txtF_Sporta.getText());
+							conectar(txtF_ipserver.getText(), txtF_Sporta.getText(), 0);
 							downloading(servico.baixarArquivo(arq), arq.getFile());
 							
 							return;
@@ -414,7 +415,7 @@ public class JShareGUI extends JFrame implements IServer {
 			// TODO: handle exception
 			JOptionPane.showMessageDialog(this, "Erro! Não foi possível fazer o download");
 			e.printStackTrace();
-			conectar(IPServer, PortaServer);
+			conectar(IPServer, PortaServer, 0);
 			JOptionPane.showMessageDialog(this, "Reconectando...");
 		}
 		
@@ -442,7 +443,7 @@ public class JShareGUI extends JFrame implements IServer {
 			// TODO: handle exception
 			JOptionPane.showMessageDialog(this, "Não foi possível realizar a pesquisa...");
 			e.printStackTrace();
-			conectar(IPServer, PortaServer);
+			conectar(IPServer, PortaServer, 0);
 			JOptionPane.showMessageDialog(this, "Reconectando...");
 		}
 		
@@ -476,6 +477,7 @@ public class JShareGUI extends JFrame implements IServer {
 	}
 	
 	public int verificaPorta(String numPorta){
+		System.out.println(numPorta);
 		numPorta.trim();
 		if (!numPorta.matches("[0-9]+") || numPorta.length() > 5) {
 			throw new RuntimeException("A porta deve ser um valor numérico de no máximo 5 dígitos!");
@@ -495,7 +497,7 @@ public class JShareGUI extends JFrame implements IServer {
 		return nomeCliente;
 	}
 
-	protected void conectar(String host, String porta) throws RuntimeException {
+	protected void conectar(String host, String porta, int nError) throws RuntimeException {
 		// TODO Auto-generated method stub
 		try {
 			host = verificaIP(host);
@@ -510,22 +512,32 @@ public class JShareGUI extends JFrame implements IServer {
 				cliente = new Cliente();
 				cliente.setNome(verificaNome(txtF_nome.getText()));
 				cliente.setIp(verificaIP(cBx_endip.getSelectedItem().toString()));
-				cliente.setPorta(verificaPorta(txtF_Sporta.getText()));
+				cliente.setPorta(verificaPorta(txtF_Uporta.getText().trim()));
 				
 			} else {
 				cliente.setNome(verificaNome(txtF_nome.getText()));
 				cliente.setIp(verificaIP(cBx_endip.getSelectedItem().toString()));
-				cliente.setPorta(verificaPorta(txtF_Sporta.getText()));
+				cliente.setPorta(verificaPorta(txtF_Uporta.getText()));
 			}
 			
-			servico = (IServer) Naming.lookup("rmi:// " + host + " : " + porta + " / " + IServer.NOME_SERVICO);
+			servico = (IServer) Naming.lookup("rmi://" + host + ":" + numporta + "/" + IServer.NOME_SERVICO);
 			
+			servico.registrarCliente(cliente);
+			servico.publicarListaArquivos(cliente, new ListarDiretoriosArquivos().listarArquivos() );
 			
+		
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, e.getMessage() + "ERRO! Verifique se há conectivade com o servidor.");
 			e.printStackTrace();
-			conectar(IPServer, PortaServer);
-			JOptionPane.showMessageDialog(this, "Reconectando...");
+			
+			if (nError < 2) {
+				conectar(IPServer, PortaServer, nError+1);
+				JOptionPane.showMessageDialog(this, "Reconectando...");
+			} else {
+				JOptionPane.showMessageDialog(this, "Não foi possível reconectar...");
+			}
+			
+			
 		}
 	}
 
