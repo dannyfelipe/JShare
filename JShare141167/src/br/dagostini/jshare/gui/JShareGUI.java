@@ -155,6 +155,7 @@ public class JShareGUI extends JFrame implements IServer {
 		panel.add(lblNome, gbc_lblNome);
 
 		txtF_nome = new JTextField();
+		txtF_nome.setText("D. Felipe");
 		GridBagConstraints gbc_txtF_nome = new GridBagConstraints();
 		gbc_txtF_nome.gridwidth = 3;
 		gbc_txtF_nome.insets = new Insets(0, 0, 5, 5);
@@ -173,6 +174,7 @@ public class JShareGUI extends JFrame implements IServer {
 		panel.add(lblIpServer, gbc_lblIpServer);
 
 		txtF_ipserver = new JTextField();
+		txtF_ipserver.setText("127.0.0.1");
 		GridBagConstraints gbc_txtF_ipserver = new GridBagConstraints();
 		gbc_txtF_ipserver.insets = new Insets(0, 0, 5, 5);
 		gbc_txtF_ipserver.fill = GridBagConstraints.HORIZONTAL;
@@ -190,6 +192,7 @@ public class JShareGUI extends JFrame implements IServer {
 		panel.add(lblPorta, gbc_lblPorta);
 
 		txtF_Uporta = new JTextField();
+		txtF_Uporta.setText("1818");
 		GridBagConstraints gbc_txtF_Uporta = new GridBagConstraints();
 		gbc_txtF_Uporta.insets = new Insets(0, 0, 5, 5);
 		gbc_txtF_Uporta.fill = GridBagConstraints.HORIZONTAL;
@@ -327,6 +330,7 @@ public class JShareGUI extends JFrame implements IServer {
 		panel_1.add(lblPorta_1, gbc_lblPorta_1);
 
 		txtF_Sporta = new JTextField();
+		txtF_Sporta.setText("1818");
 		GridBagConstraints gbc_txtF_Sporta = new GridBagConstraints();
 		gbc_txtF_Sporta.insets = new Insets(0, 0, 5, 0);
 		gbc_txtF_Sporta.fill = GridBagConstraints.HORIZONTAL;
@@ -524,6 +528,7 @@ public class JShareGUI extends JFrame implements IServer {
 			servico.registrarCliente(cliente);
 			servico.publicarListaArquivos(cliente, new ListarDiretoriosArquivos().listarArquivos());
 			
+			btn_conectar.setEnabled(false);
 			btn_Pesquisar.setEnabled(true);
 			btn_Download.setEnabled(true);
 
@@ -572,8 +577,28 @@ public class JShareGUI extends JFrame implements IServer {
 		}
 
 		try {
+			/*
+			 * Exporta o objeto remoto para fazê-lo disponível para receber
+			 * chamadas remotas usando a porta informada. O objeto é exportado
+			 * com um server socket criado usando a classe RMISocketFactory. É
+			 * passado o zero como porta para que o RMI use qualquer porta.
+			 */
 			servidor = (IServer) UnicastRemoteObject.exportObject(this, 0);
+
+			/*
+			 * Cria e exporta uma instância de Registry no localhost que aceita
+			 * conexões tcp/ip na porta especificada. É nessa porta que o
+			 * cliente deve conectar. Assegure-se de que a porta esteja
+			 * disponível na máquina e que o cliente use a mesma porta para
+			 * conectar no servidor.
+			 */
 			registry = LocateRegistry.createRegistry(numporta);
+
+			/*
+			 * Registra o objeto remoto exportado atribuindo-lhe um nome Para o
+			 * nome é utilizada a constante da interface mas pode ser uma String
+			 * qualquer desde que o cliente saiba qual é o nome correto.
+			 */
 			registry.rebind(IServer.NOME_SERVICO, servidor);
 
 			// System.out.println("SERVIÇO INICIADO...");
@@ -611,6 +636,10 @@ public class JShareGUI extends JFrame implements IServer {
 
 	}
 
+	/*
+	 * Repassa as informações para o console adicionando informações de data e
+	 * hora.
+	 */
 	private void exibirMsg(String string) {
 		txtA_Status.append(dateformat.format(new Date()));
 		txtA_Status.append(" => ");
@@ -644,9 +673,9 @@ public class JShareGUI extends JFrame implements IServer {
 		// TODO Auto-generated method stub
 
 		exibirMsg("Pesquisado o arquivo: " + nome);
-		
+
 		nome.trim();
-		
+
 		if (nome.length() == 0) {
 			return arquivos;
 		}
