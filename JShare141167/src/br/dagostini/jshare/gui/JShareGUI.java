@@ -68,17 +68,32 @@ public class JShareGUI extends JFrame implements IServer {
 	 * VARIÁVEIS DE INSTÂNCIA
 	 */
 	private IServer servidor;
+
+	/**
+	 * Registo onde o objeto exportado será buscado pelo nome. É o registro que
+	 * escuta na porta TCP/IP, aberto no servidor.
+	 */
 	private Registry registry;
-	// formatação da data para exibição na área de status
+	/**
+	 * formatação da data para exibição na área de status
+	 */
 	private SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy H:mm:ss:SSS");
-	// lista dos clientes registrados no servidor
+	/**
+	 * lista dos clientes registrados no servidor
+	 */
 	private Map<String, Cliente> clientes = new HashMap<>();
-	// lista dos arquivos disponibilizados no servidor
+	/**
+	 * lista dos arquivos disponibilizados no servidor
+	 */
 	private Map<Cliente, List<Arquivo>> arquivos = new HashMap<>();
 
 	private static String IPServer = null;
 	private static String PortaServer = null;
 	private IServer servico = null;
+	/**
+	 * Referência a esse próprio objeto depois de exportado, passado para o
+	 * servidor.
+	 */
 	private Cliente cliente = null;
 
 	/**
@@ -90,6 +105,11 @@ public class JShareGUI extends JFrame implements IServer {
 				try {
 					JShareGUI frame = new JShareGUI();
 					frame.setVisible(true);
+					
+					/*
+					 * Só essa chamada não foi feita pelo Window Builder.
+					 */
+					frame.configurar();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -380,8 +400,23 @@ public class JShareGUI extends JFrame implements IServer {
 		panel_1.add(btn_PararServico, gbc_btn_PararServico);
 
 		configIP();
+
+	}
+
+	/**
+	 * Chamado para fazer as configurações de tela adicionais que não são feitas
+	 * no Window Builder.
+	 */
+	public void configurar() {
+		// TODO Auto-generated method stub
+		
 		btn_Pesquisar.setEnabled(false);
 		btn_Download.setEnabled(false);
+
+		// Configura o frame para encerrar a aplicação ao clicar no botão fechar
+		// (X).
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
 	}
 
 	protected void download() {
@@ -527,7 +562,7 @@ public class JShareGUI extends JFrame implements IServer {
 
 			servico.registrarCliente(cliente);
 			servico.publicarListaArquivos(cliente, new ListarDiretoriosArquivos().listarArquivos());
-			
+
 			btn_conectar.setEnabled(false);
 			btn_Pesquisar.setEnabled(true);
 			btn_Download.setEnabled(true);
@@ -576,6 +611,7 @@ public class JShareGUI extends JFrame implements IServer {
 			return;
 		}
 
+		// Iniciando objetos para conexão.
 		try {
 			/*
 			 * Exporta o objeto remoto para fazê-lo disponível para receber
@@ -616,6 +652,10 @@ public class JShareGUI extends JFrame implements IServer {
 
 	}
 
+	/**
+	 * Avisa os clientes e encerra as atividades do servidor, mas não fecha a
+	 * aplicação.
+	 */
 	protected void stopService() {
 		// TODO Auto-generated method stub
 
@@ -646,6 +686,12 @@ public class JShareGUI extends JFrame implements IServer {
 		txtA_Status.append(string);
 		txtA_Status.append("\n");
 	}
+
+	// =======================================================================================
+	//
+	// Métodos da implementação da interface.
+	//
+	// =======================================================================================
 
 	@Override
 	public void registrarCliente(Cliente c) throws RemoteException {
