@@ -75,12 +75,11 @@ public class JShareGUI extends JFrame implements IServer {
 	private Map<String, Cliente> clientes = new HashMap<>();
 	// lista dos arquivos disponibilizados no servidor
 	private Map<Cliente, List<Arquivo>> arquivos = new HashMap<>();
-	
+
 	private static String IPServer = null;
 	private static String PortaServer = null;
 	private IServer servico = null;
 	private Cliente cliente = null;
-
 
 	/**
 	 * Launch the application.
@@ -111,8 +110,7 @@ public class JShareGUI extends JFrame implements IServer {
 		GridBagLayout gbl_contentPane = new GridBagLayout();
 		gbl_contentPane.columnWidths = new int[] { 308, 0, 0, 0 };
 		gbl_contentPane.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		gbl_contentPane.columnWeights = new double[] { 1.0,
-				0.0, 1.0, Double.MIN_VALUE };
+		gbl_contentPane.columnWeights = new double[] { 1.0, 0.0, 1.0, Double.MIN_VALUE };
 		gbl_contentPane.rowWeights = new double[] { 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
 				0.0, Double.MIN_VALUE };
 		contentPane.setLayout(gbl_contentPane);
@@ -144,8 +142,7 @@ public class JShareGUI extends JFrame implements IServer {
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[] { 0, 0, 0, 0, 0, 0 };
 		gbl_panel.rowHeights = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		gbl_panel.columnWeights = new double[] { 0.0, 1.0, 0.0, 1.0, 0.0,
-				Double.MIN_VALUE };
+		gbl_panel.columnWeights = new double[] { 0.0, 1.0, 0.0, 1.0, 0.0, Double.MIN_VALUE };
 		gbl_panel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 0.0, 0.0, Double.MIN_VALUE };
 		panel.setLayout(gbl_panel);
 
@@ -359,58 +356,60 @@ public class JShareGUI extends JFrame implements IServer {
 				stopService();
 			}
 		});
-		
-				btn_IniciarServico = new JButton("Iniciar serviço");
-				btn_IniciarServico.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						// invoca o método para que o serviço do servidor seja iniciado.
-						startService();
-					}
-				});
-				GridBagConstraints gbc_btn_IniciarServico = new GridBagConstraints();
-				gbc_btn_IniciarServico.anchor = GridBagConstraints.EAST;
-				gbc_btn_IniciarServico.insets = new Insets(0, 0, 0, 5);
-				gbc_btn_IniciarServico.gridx = 1;
-				gbc_btn_IniciarServico.gridy = 11;
-				panel_1.add(btn_IniciarServico, gbc_btn_IniciarServico);
+
+		btn_IniciarServico = new JButton("Iniciar serviço");
+		btn_IniciarServico.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// invoca o método para que o serviço do servidor seja iniciado.
+				startService();
+			}
+		});
+		GridBagConstraints gbc_btn_IniciarServico = new GridBagConstraints();
+		gbc_btn_IniciarServico.anchor = GridBagConstraints.EAST;
+		gbc_btn_IniciarServico.insets = new Insets(0, 0, 0, 5);
+		gbc_btn_IniciarServico.gridx = 1;
+		gbc_btn_IniciarServico.gridy = 11;
+		panel_1.add(btn_IniciarServico, gbc_btn_IniciarServico);
 		GridBagConstraints gbc_btn_PararServico = new GridBagConstraints();
 		gbc_btn_PararServico.gridx = 3;
 		gbc_btn_PararServico.gridy = 11;
 		panel_1.add(btn_PararServico, gbc_btn_PararServico);
-		
+
 		configIP();
+		btn_Pesquisar.setEnabled(false);
+		btn_Download.setEnabled(false);
 	}
-	
+
 	protected void download() {
 		// TODO Auto-generated method stub
-		
+
 		try {
 			int item = list_Arquivos.getSelectedIndex();
-			
+
 			if (item > -1) {
 				String arquivo = (String) list_Arquivos.getModel().getElementAt(item);
-				
-				for (Map.Entry<Cliente, List<Arquivo> > entry : arquivos.entrySet()) {
-					
+
+				for (Map.Entry<Cliente, List<Arquivo>> entry : arquivos.entrySet()) {
+
 					for (Arquivo arq : entry.getValue()) {
-						
+
 						if (arquivo.equals(arq.getNome())) {
 							servico = null;
 							txtF_ipserver.setText(entry.getKey().getIp());
 							txtF_Sporta.setText(String.valueOf(entry.getKey().getPorta()));
 							conectar(txtF_ipserver.getText(), txtF_Sporta.getText(), 0);
 							downloading(servico.baixarArquivo(arq), arq.getFile());
-							
+
 							return;
 						}
-						
+
 					}
-					
+
 				}
 			} else {
 				JOptionPane.showMessageDialog(this, "Selecione um arquivo para baixar");
 			}
-			
+
 		} catch (RemoteException e) {
 			// TODO: handle exception
 			JOptionPane.showMessageDialog(this, "Erro! Não foi possível fazer o download");
@@ -418,27 +417,27 @@ public class JShareGUI extends JFrame implements IServer {
 			conectar(IPServer, PortaServer, 0);
 			JOptionPane.showMessageDialog(this, "Reconectando...");
 		}
-		
+
 	}
 
 	private void downloading(byte[] dados, File nome) {
 		// TODO Auto-generated method stub
 		new LeituraEscritaDeArquivos().escreva(new File(".\\Share\\Upload\\" + "Cópia de " + nome.getName()), dados);
-		
+
 	}
 
 	protected void fileSearch() {
 		// TODO Auto-generated method stub
-		
+
 		list_Arquivos.removeAll();
 		arquivos.clear();
-		
+
 		try {
 			arquivos = servico.procurarArquivo(txtF_arquivo.getText().trim());
-			for (Map.Entry<Cliente, List<Arquivo> > entry : arquivos.entrySet()) {
+			for (Map.Entry<Cliente, List<Arquivo>> entry : arquivos.entrySet()) {
 				addFileList(entry.getValue());
 			}
-			
+
 		} catch (RemoteException e) {
 			// TODO: handle exception
 			JOptionPane.showMessageDialog(this, "Não foi possível realizar a pesquisa...");
@@ -446,13 +445,13 @@ public class JShareGUI extends JFrame implements IServer {
 			conectar(IPServer, PortaServer, 0);
 			JOptionPane.showMessageDialog(this, "Reconectando...");
 		}
-		
+
 	}
 
 	private void addFileList(List<Arquivo> lista) throws RemoteException {
 		// TODO Auto-generated method stub
 		list_Arquivos.removeAll();
-		
+
 		ListModel<String> model = new AbstractListModel<String>() {
 			@Override
 			public int getSize() {
@@ -468,15 +467,15 @@ public class JShareGUI extends JFrame implements IServer {
 		list_Arquivos.setModel(model);
 	}
 
-	public String verificaIP(String endIP){
+	public String verificaIP(String endIP) {
 		endIP.trim();
 		if (!endIP.matches("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}")) {
 			throw new RuntimeException("O endereço IP é inválido!");
 		}
 		return endIP;
 	}
-	
-	public int verificaPorta(String numPorta){
+
+	public int verificaPorta(String numPorta) {
 		System.out.println(numPorta);
 		numPorta.trim();
 		if (!numPorta.matches("[0-9]+") || numPorta.length() > 5) {
@@ -488,7 +487,7 @@ public class JShareGUI extends JFrame implements IServer {
 		}
 		return intPorta;
 	}
-	
+
 	public String verificaNome(String nomeCliente) {
 		nomeCliente.trim();
 		if (nomeCliente.length() == 0) {
@@ -501,11 +500,11 @@ public class JShareGUI extends JFrame implements IServer {
 		// TODO Auto-generated method stub
 		try {
 			host = verificaIP(host);
-			
+
 			int numporta = verificaPorta(porta);
-			
+
 			if (cliente == null) {
-				if(IPServer == null || PortaServer == null){
+				if (IPServer == null || PortaServer == null) {
 					IPServer = txtF_ipserver.getText();
 					PortaServer = txtF_Uporta.getText();
 				}
@@ -513,47 +512,47 @@ public class JShareGUI extends JFrame implements IServer {
 				cliente.setNome(verificaNome(txtF_nome.getText()));
 				cliente.setIp(verificaIP(cBx_endip.getSelectedItem().toString()));
 				cliente.setPorta(verificaPorta(txtF_Uporta.getText().trim()));
-				
+
 			} else {
 				cliente.setNome(verificaNome(txtF_nome.getText()));
 				cliente.setIp(verificaIP(cBx_endip.getSelectedItem().toString()));
 				cliente.setPorta(verificaPorta(txtF_Uporta.getText()));
 			}
-			
+
 			servico = (IServer) Naming.lookup("rmi://" + host + ":" + numporta + "/" + IServer.NOME_SERVICO);
-			
+
 			servico.registrarCliente(cliente);
-			servico.publicarListaArquivos(cliente, new ListarDiretoriosArquivos().listarArquivos() );
+			servico.publicarListaArquivos(cliente, new ListarDiretoriosArquivos().listarArquivos());
 			
-		
+			btn_Pesquisar.setEnabled(true);
+			btn_Download.setEnabled(true);
+
 		} catch (Exception e) {
 			JOptionPane.showMessageDialog(null, e.getMessage() + "ERRO! Verifique se há conectivade com o servidor.");
 			e.printStackTrace();
-			
+
 			if (nError < 2) {
-				conectar(IPServer, PortaServer, nError+1);
+				conectar(IPServer, PortaServer, nError + 1);
 				JOptionPane.showMessageDialog(this, "Reconectando...");
 			} else {
 				JOptionPane.showMessageDialog(this, "Não foi possível reconectar...");
 			}
-			
-			
+
 		}
 	}
 
-
 	private void configIP() {
 		// TODO Auto-generated method stub
-		
+
 		try {
-			for (String endIP : new LerIp().ListIp() ) {
+			for (String endIP : new LerIp().ListIp()) {
 				cBx_endip.addItem(endIP);
-			} 
+			}
 		} catch (Exception e) {
 			// TODO: handle exception
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	protected void startService() {
@@ -645,6 +644,12 @@ public class JShareGUI extends JFrame implements IServer {
 		// TODO Auto-generated method stub
 
 		exibirMsg("Pesquisado o arquivo: " + nome);
+		
+		nome.trim();
+		
+		if (nome.length() == 0) {
+			return arquivos;
+		}
 
 		Map<Cliente, List<Arquivo>> procuraArquivo = new HashMap<>();
 

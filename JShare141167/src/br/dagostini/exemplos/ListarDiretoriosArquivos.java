@@ -57,4 +57,16 @@ public class ListarDiretoriosArquivos {
 		}
 		return listaArquivos;
 	}
+	
+	public List<Diretorio> listarDiretorios(){
+		List<Diretorio> listaDiretorios = new ArrayList<>();
+		for (File file : dirArquivo.listFiles()) {
+			if (!file.isFile()) {
+				Diretorio dir = new Diretorio();
+				dir.setNome(file.getName());
+				listaDiretorios.add(dir);	
+			}
+		}
+		return listaDiretorios;
+	}
 }
